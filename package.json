@@ -1,0 +1,29 @@
+{
+  "author": {
+    "name": "Oren Zomer",
+    "email": "oren.zomer@gmail.com"
+  },
+  "dependencies": {
+    "mongodb": "2.1.6"
+  },
+  "description": "MongoDB 2 driver node for Node-RED",
+  "homepage": "https://github.com/ozomer/node-red-contrib-mongodb2#readme",
+  "jshintConfig": {
+    "undef": true,
+    "unused": true,
+    "node": true
+  },
+  "keywords": [
+    "node-red",
+    "bluemix",
+    "mongodb"
+  ],
+  "license": "Apache-2.0",
+  "name": "node-red-contrib-mongodb2",
+  "node-red": {
+    "nodes": {
+      "mongodb2": "mongodb2/mongodb2.js"
+    }
+  },
+  "version": "0.5.6"
+}
