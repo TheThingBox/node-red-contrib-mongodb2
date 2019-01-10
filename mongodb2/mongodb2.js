@@ -155,6 +155,19 @@ module.exports = function(RED) {
     }
   }
 
+  function closeDBConnection(config) {
+    var poolCell = mongoPool['#' + config.deploymentId];
+    if (!poolCell) {
+      return;
+    }
+    delete mongoPool['#' + config.deploymentId];
+    poolCell.promise.then(function(client) {
+      client.db.close();
+    }, function() { // ignore error
+      // db-client was not created in the first place.
+    });
+  }
+
   RED.nodes.registerType("mongodb2 in", function Mongo2InputNode(n) {
     RED.nodes.createNode(this, n);
     this.configNode = n.configNode;
@@ -258,6 +271,14 @@ module.exports = function(RED) {
               if (err && (forEachIteration != err) && (forEachEnd != err)) {
                 profiling.error += 1;
                 debounceProfilingStatus();
+                if(err.message.indexOf("failed to reconnect after") !== -1
+                  || err.message.indexOf("Topology was destroyed") !== -1)
+                {
+                  closeDBConnection(node.config);
+                  node.timeoutconnection = setTimeout(retryConnection, 1000);
+                  node.removeAllListeners("input");
+                }
+
                 node.error(err, msg);
                 return messageHandlingCompleted();
               }
